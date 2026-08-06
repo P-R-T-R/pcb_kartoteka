@@ -7,8 +7,8 @@ This repository contains customer-owned deployment configuration only. Applicati
 1. Install Docker Engine with the Compose plugin.
 2. Copy `.env.example` to `.env` and replace every `CHANGE_ME` value.
 3. Keep `POSTGRES_PASSWORD` URL-safe and use the same value inside `DATABASE_URL`.
-4. Set the image names and an immutable release version supplied by the product owner.
-5. Authenticate Docker to the private image registry.
+4. Set the immutable release version supplied by the product owner.
+5. Authenticate Docker to the private image registry as described in `docs/REGISTRY_ACCESS.md`.
 6. Run `docker compose config` and inspect the result without publishing it.
 7. Run `docker compose pull && docker compose up -d`.
 8. Check `docker compose ps` and `curl -fsS http://127.0.0.1:18003/api/health`.
@@ -23,6 +23,8 @@ The default bind address is loopback. Put a company-managed HTTPS reverse proxy 
 4. Run `docker compose up -d --remove-orphans`.
 5. Check health, login, read access and one write operation.
 6. Keep the previous image version available for rollback.
+
+Never use a `latest` tag. Record the approved version and both image digests in the change ticket before updating.
 
 ## Backup and restore
 

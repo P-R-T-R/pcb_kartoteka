@@ -49,7 +49,7 @@ services:
     cap_drop: ["ALL"]
     security_opt: ["no-new-privileges:true"]
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:8000/api/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=5).read()"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -72,14 +72,14 @@ services:
     cap_add: ["CHOWN", "NET_BIND_SERVICE", "SETGID", "SETUID"]
     security_opt: ["no-new-privileges:true"]
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost/"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
       interval: 30s
       timeout: 10s
       retries: 5
     networks: [internal]
 
   gateway:
-    image: nginx:1.27-alpine
+    image: nginx:alpine@sha256:4a73073bd557c65b759505da037898b61f1be6cbcc3c2c3aeac22d2a470c1752
     restart: unless-stopped
     ports:
       - "${BIND_IP:-127.0.0.1}:${HTTP_PORT:-18003}:8080"
@@ -99,11 +99,11 @@ services:
       frontend:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/health"]
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:8080/api/health"]
       interval: 30s
       timeout: 10s
       retries: 5
-    networks: [internal]
+    networks: [internal, edge]
 
 volumes:
   postgres_data:
@@ -111,3 +111,4 @@ volumes:
 networks:
   internal:
     internal: true
+  edge:
