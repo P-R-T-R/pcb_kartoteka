@@ -15,4 +15,6 @@ The release workflow completed successfully on 2026-08-06. Backend and
 frontend tests, image-content checks and Trivy high/critical vulnerability
 scans passed. Both packages were verified as public for anonymous download. Do not replace this
 version with `latest`. A clean installation from these public images passed
-database migration, health, administrator login and private-read-default checks.
+database migration, frontend delivery, security headers, authentication and
+role enforcement, login rate limiting, core CRUD and cross-project execution
+flows, private-read-default checks, and Docker network/runtime isolation.
