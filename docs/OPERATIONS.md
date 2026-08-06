@@ -18,13 +18,19 @@ The default bind address is loopback. Put a company-managed HTTPS reverse proxy 
 ## Updating
 
 1. Create and verify a backup.
-2. Change only `APP_VERSION` to the approved immutable release.
+2. Change `APP_VERSION`, `BACKEND_DIGEST` and `FRONTEND_DIGEST` to the exact
+   values in the approved `docs/RELEASE.md` record.
 3. Run `docker compose pull`.
 4. Run `docker compose up -d --remove-orphans`.
 5. Check health, login, read access and one write operation.
 6. Keep the previous image version available for rollback.
 
-Never use a `latest` tag. Record the approved version and both image digests from `docs/RELEASE.md` in the change ticket before updating.
+Never use a `latest` tag and never deploy by a mutable tag alone. Compose pins
+both images by digest. Record the approved version and both image digests from
+`docs/RELEASE.md` in the change ticket before updating.
+
+See `docs/ADMIN_GUIDE.md` for the complete configuration, capacity, domain,
+monitoring, backup, update, rollback and incident-response guide.
 
 ## Backup and restore
 
