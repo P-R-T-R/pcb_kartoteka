@@ -8,7 +8,7 @@ This repository contains customer-owned deployment configuration only. Applicati
 2. Copy `.env.example` to `.env` and replace every `CHANGE_ME` value.
 3. Keep `POSTGRES_PASSWORD` URL-safe and use the same value inside `DATABASE_URL`.
 4. Confirm that `APP_VERSION` and the image digests match `docs/RELEASE.md`.
-5. Authenticate Docker to the private image registry as described in `docs/REGISTRY_ACCESS.md`.
+5. Verify anonymous image access as described in `docs/REGISTRY_ACCESS.md`.
 6. Run `docker compose config` and inspect the result without publishing it.
 7. Run `docker compose pull && docker compose up -d`.
 8. Check `docker compose ps` and `curl -fsS http://127.0.0.1:18003/api/health`.

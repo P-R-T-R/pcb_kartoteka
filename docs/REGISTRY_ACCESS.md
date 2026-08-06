@@ -1,27 +1,20 @@
-# Private registry access
+# Container image access
 
-The application images are private:
+The application images are public for anonymous download:
 
 - `ghcr.io/p-r-t-r/pcb-kartoteka-backend`
 - `ghcr.io/p-r-t-r/pcb-kartoteka-frontend`
 
-Create a dedicated GitHub service account for each customer installation. Grant that account read access to both container packages. Do not reuse a developer or administrator account.
+No GitHub account or registry token is required to pull these images. The
+application source repository remains private, and the images remain subject
+to the proprietary license supplied with this deployment package.
 
-GitHub Container Registry currently requires a personal access token (classic) for command-line package access. Create a token for the service account with only `read:packages`. Do not grant `write:packages`, repository access or organization administration.
-
-Authenticate once on the Docker host:
-
-```sh
-printf '%s' "$GHCR_READ_TOKEN" | docker login ghcr.io --username CUSTOMER_SERVICE_ACCOUNT --password-stdin
-```
-
-Remove `GHCR_READ_TOKEN` from the shell immediately after login. Docker stores credentials under the operating account running Compose; protect that account and its Docker configuration. Never place the token in `.env`, Compose, this repository, command history, tickets or chat.
-
-Verify access without starting the service:
+Verify anonymous access without starting the service:
 
 ```sh
-docker pull ghcr.io/p-r-t-r/pcb-kartoteka-backend:APP_VERSION
-docker pull ghcr.io/p-r-t-r/pcb-kartoteka-frontend:APP_VERSION
+docker pull ghcr.io/p-r-t-r/pcb-kartoteka-backend:0.6.0
+docker pull ghcr.io/p-r-t-r/pcb-kartoteka-frontend:0.6.0
 ```
 
-Use only an approved immutable version. Compare the resulting digests with the release record. Revoke the service account or token when the installation is retired or access may have been exposed.
+Use only the approved immutable version in `docs/RELEASE.md`. Compare both
+resulting digests with that record. Never use `latest`.
