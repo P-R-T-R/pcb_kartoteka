@@ -1,20 +1,36 @@
-# Container image access
+# Доступ к Docker-образам
 
-The application images are public for anonymous download:
+Готовые образы PCB Kartoteka хранятся в приватном GitHub Container Registry:
 
-- `ghcr.io/p-r-t-r/pcb-kartoteka-backend`
-- `ghcr.io/p-r-t-r/pcb-kartoteka-frontend`
+- `ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable`
+- `ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable`
 
-No GitHub account or registry token is required to pull these images. The
-application source repository remains private, and the images remain subject
-to the proprietary license supplied with this deployment package.
+Исходный код и образы не публикуются для анонимного скачивания. До установки
+владелец продукта предоставляет GitHub-пользователю компании право чтения этих
+двух пакетов. Компания создает собственный Personal Access Token (classic)
+только с разрешением `read:packages`.
 
-Verify anonymous access without starting the service:
+Войдите в registry интерактивно, не записывая токен в команду или историю:
 
 ```sh
-docker pull ghcr.io/p-r-t-r/pcb-kartoteka-backend:0.6.0
-docker pull ghcr.io/p-r-t-r/pcb-kartoteka-frontend:0.6.0
+read -rsp "GHCR token: " GHCR_TOKEN; echo
+printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u CLIENT_GITHUB_LOGIN --password-stdin
+unset GHCR_TOKEN
 ```
 
-Use only the approved immutable version in `docs/RELEASE.md`. Compare both
-resulting digests with that record. Never use `latest`.
+Проверьте доступ без запуска сервиса:
+
+```sh
+docker pull ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable:0.8.1
+docker pull ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable:0.8.1
+```
+
+Не добавляйте токен в `.env`, Compose, Git, документацию, тикеты или сообщения.
+На постоянном сервере настройте поддерживаемый Docker credential helper. Для
+разовой установки после скачивания можно выполнить `docker logout ghcr.io`;
+запущенные контейнеры продолжат работать, но следующее обновление снова
+потребует входа.
+
+Используйте только версию и точные digest из `docs/RELEASE.md`. Тег `latest` не
+используется. Если доступ больше не нужен или токен мог быть раскрыт, отзовите
+токен в GitHub и сообщите владельцу продукта для снятия доступа к пакетам.

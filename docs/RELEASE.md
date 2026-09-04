@@ -1,24 +1,21 @@
-# Approved release
+# Утвержденный релиз
 
-Version: `0.7.0`
+Version: `0.8.1`
 
 Published from source commit:
 
-`ff34becfc6e39595c013cd7a0bc5d340d33eb39d`
+`bfdfbb121039dcd18d022f25d942d0ddf7dc0ff5`
 
-Approved public images:
+Утвержденные private stable images:
 
-- Backend: `ghcr.io/p-r-t-r/pcb-kartoteka-backend:0.7.0@sha256:e428a77e41827f999340d90c723493cf6ee3c946a6a63ef4d937510ec88966a6`
-- Frontend: `ghcr.io/p-r-t-r/pcb-kartoteka-frontend:0.7.0@sha256:6ce0754f82ab0c34df920318d63bf6b998bca64b0f4b8c67f16df74665aa96ea`
+- Backend: `ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable:0.8.1@sha256:fd13402e596bd47cdd0098682a872e271bc0ef7b7ad5a95794eea67b4aa1095c`
+- Frontend: `ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable:0.8.1@sha256:85a812da6d2ce0c4c7472e34ca130e73eca26050dfcd2fdb1bf1b373d5a8d457`
 
-The release workflow completed successfully on 2026-08-07. Backend and
-frontend tests, image-content checks and Trivy high/critical vulnerability
-scans passed. Promotion run `31165475524` copied the approved RC3 manifests
-without rebuilding, and both public digests match the owner-approved candidate.
-Both packages were verified as public for anonymous download. Do not replace
-this version with `latest`.
+Образы прошли тесты приложения, проверку содержимого, сканирование
+HIGH/CRITICAL-уязвимостей, приемку на тестовом адресе и развертывание на
+production владельца. Стабильные теги получены копированием утвержденного RC
+без пересборки, поэтому digest совпадают с проверенным кандидатом.
 
-Clean-install workflow `31165991954` deployed the public images without registry
-credentials and passed database migration, frontend delivery, security headers,
-authentication, role enforcement, rate limiting, core CRUD, cross-project
-product flows and Docker network/runtime isolation.
+Пакеты остаются private. Для скачивания требуется выданный компании доступ и
+собственный токен только с `read:packages`; порядок описан в
+`docs/REGISTRY_ACCESS.md`. Не заменяйте эту версию тегом `latest`.
