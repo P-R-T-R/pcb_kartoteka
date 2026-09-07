@@ -1,36 +1,42 @@
 # Доступ к Docker-образам
 
-Готовые образы PCB Kartoteka хранятся в приватном GitHub Container Registry:
+Стабильные образы доступны публично в GitHub Container Registry:
 
 - `ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable`
 - `ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable`
 
-Исходный код и образы не публикуются для анонимного скачивания. До установки
-владелец продукта предоставляет GitHub-пользователю компании право чтения этих
-двух пакетов. Компания создает собственный Personal Access Token (classic)
-только с разрешением `read:packages`.
+Для скачивания не нужны аккаунт GitHub, токен или `docker login`.
+Репозиторий исходников и образы кандидатов RC остаются приватными.
+Публичное скачивание не меняет условия лицензии приложения.
 
-Войдите в registry интерактивно, не записывая токен в команду или историю:
-
-```sh
-read -rsp "GHCR token: " GHCR_TOKEN; echo
-printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u CLIENT_GITHUB_LOGIN --password-stdin
-unset GHCR_TOKEN
-```
-
-Проверьте доступ без запуска сервиса:
+После настройки `.env` по `docs/RELEASE.md` проверьте выбранные образы:
 
 ```sh
-docker pull ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable:0.8.1
-docker pull ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable:0.8.1
+docker compose config --images
+docker compose pull
 ```
 
-Не добавляйте токен в `.env`, Compose, Git, документацию, тикеты или сообщения.
-На постоянном сервере настройте поддерживаемый Docker credential helper. Для
-разовой установки после скачивания можно выполнить `docker logout ghcr.io`;
-запущенные контейнеры продолжат работать, но следующее обновление снова
-потребует входа.
+Оба имени должны содержать `-stable`, утвержденную версию и точный digest.
+Тег `latest` не используется. Данные и пароли установки остаются в локальном
+`.env` и базе; не добавляйте их в Git или сообщения.
 
-Используйте только версию и точные digest из `docs/RELEASE.md`. Тег `latest` не
-используется. Если доступ больше не нужен или токен мог быть раскрыт, отзовите
-токен в GitHub и сообщите владельцу продукта для снятия доступа к пакетам.
+## Обновление с 0.7.0
+
+Старые имена без `-stable` больше не обновляются. Замените в существующем
+`.env` пять значений из актуального `.env.example`: `APP_VERSION`,
+`BACKEND_IMAGE`, `FRONTEND_IMAGE`, `BACKEND_DIGEST`, `FRONTEND_DIGEST`.
+Сохраните остальные настройки. `git pull` не обновляет ваш `.env`.
+В следующих релизах имена сохраняются, меняются версия и оба digest.
+
+Если Docker сообщает ошибку авторизации, проверьте имена образов и старые
+сохраненные учетные данные GHCR. Для независимой проверки публичного доступа:
+
+```sh
+anonymous_config="$(mktemp -d)"
+docker --config "$anonymous_config" pull ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable:0.8.1
+docker --config "$anonymous_config" pull ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable:0.8.1
+rmdir "$anonymous_config"
+```
+
+При недоступности пакетов сообщите владельцу продукта. Не заменяйте их старыми
+образами без суффикса и не выполняйте запуск обновления после неудачного pull.
