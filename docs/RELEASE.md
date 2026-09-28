@@ -1,15 +1,23 @@
 # Утвержденный релиз
 
-Version: `0.8.1`
+Version: `0.8.2`
 
 Published from source commit:
 
-`bfdfbb121039dcd18d022f25d942d0ddf7dc0ff5`
+`ddf4e2c8202a644dfd21efe86a790e29b4cb80e2`
 
 Утвержденные public stable images:
 
-- Backend: `ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable:0.8.1@sha256:fd13402e596bd47cdd0098682a872e271bc0ef7b7ad5a95794eea67b4aa1095c`
-- Frontend: `ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable:0.8.1@sha256:85a812da6d2ce0c4c7472e34ca130e73eca26050dfcd2fdb1bf1b373d5a8d457`
+- Backend: `ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable:0.8.2@sha256:adda426d737db15d24143687f98df4a25788897faf4d95fac55dadc6a249e34b`
+- Frontend: `ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable:0.8.2@sha256:c51ba884b94251ce9cbaf59811574d45eab360433d30cf8df8efbc3c7135fc71`
+
+Основные изменения:
+
+- добавлены полноценные сборки с платами и включением сборок в изделия;
+- администратор может редактировать платы, сборки, изделия и проекты;
+- автоматизировано создание карточек плат и имён проектов Altium;
+- эскизные обозначения изделий и сборок используют префикс `ТРЛЕ.Э`;
+- добавлена настраиваемая ссылка обратной связи.
 
 Образы прошли тесты приложения, проверку содержимого, сканирование
 HIGH/CRITICAL-уязвимостей, приемку на тестовом адресе и развертывание на

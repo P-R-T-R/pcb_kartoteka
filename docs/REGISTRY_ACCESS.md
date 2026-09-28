@@ -33,8 +33,8 @@ docker compose pull
 
 ```sh
 anonymous_config="$(mktemp -d)"
-docker --config "$anonymous_config" pull ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable:0.8.1
-docker --config "$anonymous_config" pull ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable:0.8.1
+docker --config "$anonymous_config" pull ghcr.io/p-r-t-r/pcb-kartoteka-backend-stable:0.8.2
+docker --config "$anonymous_config" pull ghcr.io/p-r-t-r/pcb-kartoteka-frontend-stable:0.8.2
 rmdir "$anonymous_config"
 ```
 
