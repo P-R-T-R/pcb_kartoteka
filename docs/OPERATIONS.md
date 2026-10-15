@@ -40,6 +40,9 @@ monitoring, backup, update, rollback and incident-response guide.
 
 Run `sh scripts/backup.sh` from the repository root. Copy verified backups to encrypted storage outside this host. Test restore regularly on an isolated environment.
 
+When the Activity overlay is enabled, back up and restore its separate database
+as described in `docs/ACTIVITY.md`; the core backup does not include it.
+
 Restore is destructive: `sh scripts/restore.sh <backup-file>`. The script requires typing `RESTORE`, stops the backend, replaces the database and starts the backend again.
 
 ## Access policy

@@ -1,0 +1,106 @@
+# Add with: docker compose -f compose.yaml -f compose.activity.yaml up -d --wait
+# Requires a release containing /activity in its backend image.
+services:
+  activity-db:
+    image: postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: activity_owner
+      POSTGRES_DB: activity
+      POSTGRES_PASSWORD: ${ACTIVITY_DB_PASSWORD:?Set ACTIVITY_DB_PASSWORD}
+    volumes:
+      - activity_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U activity_owner -d activity"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    security_opt: ["no-new-privileges:true"]
+    networks: [internal]
+
+  activity-migrate:
+    image: ${BACKEND_IMAGE}:${APP_VERSION}@${BACKEND_DIGEST}
+    working_dir: /activity
+    environment:
+      ACTIVITY_DATABASE_URL: postgresql+asyncpg://activity_owner:${ACTIVITY_DB_PASSWORD}@activity-db:5432/activity
+    command: ["python", "-m", "app.migrate"]
+    depends_on:
+      activity-db:
+        condition: service_healthy
+    read_only: true
+    tmpfs: ["/tmp:size=32m,mode=1777"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: "no"
+    networks: [internal]
+
+  activity-core-role:
+    image: postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER}
+      PGDATABASE: ${POSTGRES_DB}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      ACTIVITY_CORE_DB_PASSWORD: ${ACTIVITY_CORE_DB_PASSWORD:?Set ACTIVITY_CORE_DB_PASSWORD}
+    volumes:
+      - ./scripts/bootstrap-core-role.sh:/bootstrap.sh:ro
+    entrypoint: ["sh", "/bootstrap.sh"]
+    depends_on:
+      backend:
+        condition: service_healthy
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: "no"
+    networks: [internal]
+
+  activity-runtime-role:
+    image: postgres:16-alpine@sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea
+    environment:
+      PGHOST: activity-db
+      PGUSER: activity_owner
+      PGDATABASE: activity
+      PGPASSWORD: ${ACTIVITY_DB_PASSWORD}
+      ACTIVITY_RUNTIME_PASSWORD: ${ACTIVITY_RUNTIME_PASSWORD:?Set ACTIVITY_RUNTIME_PASSWORD}
+    volumes:
+      - ./scripts/bootstrap-activity-role.sh:/bootstrap.sh:ro
+    entrypoint: ["sh", "/bootstrap.sh"]
+    depends_on:
+      activity-migrate:
+        condition: service_completed_successfully
+    read_only: true
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    restart: "no"
+    networks: [internal]
+
+  activity-service:
+    image: ${BACKEND_IMAGE}:${APP_VERSION}@${BACKEND_DIGEST}
+    working_dir: /activity
+    restart: unless-stopped
+    environment:
+      CORE_DATABASE_URL: postgresql+asyncpg://pcb_activity_reader:${ACTIVITY_CORE_DB_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      ACTIVITY_DATABASE_URL: postgresql+asyncpg://pcb_activity_writer:${ACTIVITY_RUNTIME_PASSWORD}@activity-db:5432/activity
+      POLL_INTERVAL_SECONDS: ${ACTIVITY_POLL_INTERVAL_SECONDS:-1}
+      RETRY_DELAY_SECONDS: ${ACTIVITY_RETRY_DELAY_SECONDS:-5}
+      BATCH_SIZE: ${ACTIVITY_BATCH_SIZE:-50}
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log", "--log-level", "warning"]
+    depends_on:
+      activity-core-role:
+        condition: service_completed_successfully
+      activity-runtime-role:
+        condition: service_completed_successfully
+    read_only: true
+    tmpfs: ["/tmp:size=32m,mode=1777"]
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5).read()"]
+      interval: 5s
+      timeout: 6s
+      retries: 20
+      start_period: 10s
+    networks: [internal]
+
+volumes:
+  activity_data:

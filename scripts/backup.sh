@@ -13,7 +13,10 @@ trap 'rm -f "$TEMP_FILE"' EXIT
 docker compose exec -T postgres sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB"' | gzip > "$TEMP_FILE"
 test -s "$TEMP_FILE"
 gzip -t "$TEMP_FILE"
-gunzip -c "$TEMP_FILE" | grep -Eq '^(CREATE TABLE|CREATE SCHEMA|COPY .+ FROM stdin;|INSERT INTO )'
+gunzip -c "$TEMP_FILE" | awk '
+  /^(CREATE TABLE|CREATE SCHEMA|COPY .+ FROM stdin;|INSERT INTO )/ { found = 1 }
+  END { exit(found ? 0 : 1) }
+'
 mv "$TEMP_FILE" "$BACKUP_FILE"
 find "$BACKUP_DIR" -type f -name 'pcb_backup_*.sql.gz' -mtime "+$RETENTION_DAYS" -delete
 

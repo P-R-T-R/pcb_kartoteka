@@ -20,6 +20,8 @@
 - `compose.yaml` и `.env.example`;
 - защищенная конфигурация gateway в `nginx/app.conf`;
 - `scripts/backup.sh` и `scripts/restore.sh`;
+- опциональный контейнер журнала изменений, его отдельные backup/restore и
+  инструкция `docs/ACTIVITY.md`;
 - клиентские инструкции в `docs/`;
 - ограниченная лицензия на внутреннее использование установки.
 

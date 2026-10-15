@@ -117,6 +117,17 @@ WEB_CONCURRENCY * (DB_POOL_SIZE + DB_MAX_OVERFLOW)
 архив в зашифрованное хранилище вне Docker-хоста и контролируйте срок хранения
 по правилам компании.
 
+### Опциональный журнал изменений
+
+`ACTIVITY_DB_PASSWORD` принадлежит отдельной базе журнала,
+`ACTIVITY_CORE_DB_PASSWORD` используется ограниченным читателем исходящей
+очереди, а `ACTIVITY_RUNTIME_PASSWORD` — дописывающим историю сервисом. Для них
+нужны три разных URL-safe секрета. `ACTIVITY_POLL_INTERVAL_SECONDS`,
+`ACTIVITY_RETRY_DELAY_SECONDS` и `ACTIVITY_BATCH_SIZE` управляют доставкой;
+оставьте значения по умолчанию до появления измеренной постоянной очереди.
+Установка, health check, backup, восстановление и откат описаны в
+`docs/ACTIVITY.md`.
+
 ## Первый запуск
 
 ```sh
