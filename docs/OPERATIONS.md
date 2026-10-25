@@ -7,11 +7,13 @@ This repository contains customer-owned deployment configuration only. Applicati
 1. Install Docker Engine with the Compose plugin.
 2. Copy `.env.example` to `.env` and replace every `CHANGE_ME` value.
 3. Keep `POSTGRES_PASSWORD` URL-safe and use the same value inside `DATABASE_URL`.
-4. Confirm that `APP_VERSION` and the image digests match `docs/RELEASE.md`.
-5. Stable images are public; no registry account or token is required.
-6. Run `docker compose config` and inspect the result without publishing it.
-7. Run `docker compose pull && docker compose up -d`.
-8. Check `docker compose ps` and `curl -fsS http://127.0.0.1:18003/api/health`.
+4. Set `DATABASE_TARGET_CONFIRMATION` to the exact credential-free target from
+   `DATABASE_URL`, normally `postgres:5432/pcb_catalog`.
+5. Confirm that `APP_VERSION` and the image digests match `docs/RELEASE.md`.
+6. Stable images are public; no registry account or token is required.
+7. Run `docker compose config` and inspect the result without publishing it.
+8. Run `docker compose pull && docker compose up -d`.
+9. Check `docker compose ps` and `curl -fsS http://127.0.0.1:18003/api/health`.
 
 The default bind address is loopback. Put a company-managed HTTPS reverse proxy in front of it. Do not expose PostgreSQL or the backend container directly.
 
